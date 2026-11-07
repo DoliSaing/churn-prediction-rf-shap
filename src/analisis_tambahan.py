@@ -104,4 +104,4 @@ for n,p in proba.items():
     pr,rc,_=precision_recall_curve(yte,p); ax.plot(rc,pr,lw=1.6,label=f"{lab[n]} (AP={average_precision_score(yte,p):.3f})")
 ax.axhline(yte.mean(),ls='--',c='gray',label=f'Acuan acak ({yte.mean():.3f})')
 ax.set_xlabel('Recall'); ax.set_ylabel('Precision'); ax.set_title('Kurva Precision-Recall pada Data Uji'); ax.legend(fontsize=8,loc='upper right')
-plt.tight_layout(); plt.savefig(ROOT/'figures'/'gambar8_pr_curve.png',dpi=200); print('DONE')
+plt.tight_layout(); plt.savefig(ROOT/'figures'/'gambar1_pr_curve.png',dpi=200); print('DONE')

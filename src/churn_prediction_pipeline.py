@@ -15,8 +15,8 @@
    4. Penyeimbangan data dengan SMOTE -> RF SMOTE Tuned
    5. Perbandingan dengan XGBoost, LightGBM, CatBoost
    6. Evaluasi (Tabel perbandingan model pada naskah)
-   7. Interpretasi SHAP global (Gambar 3 & 4)
-   8. Interpretasi SHAP lokal / waterfall plot (Gambar 5, 6, 7)
+   7. Interpretasi SHAP global (Gambar 4 & 5)
+   8. Interpretasi SHAP lokal / waterfall plot (Gambar 6, 7, 8)
 
  REVISI REVIEWER (poin 1: kontribusi & ukuran kelompok 3-4 produk):
    - Menghitung sebaran NumOfProducts pada seluruh dataset dan data uji
@@ -24,8 +24,8 @@
    - Meringkas nilai SHAP fitur Jumlah Produk per kelompok pada data uji
    Bagian yang ditambahkan ditandai dengan komentar "REVISI REVIEWER".
 
- Menjalankan skrip ini akan menghasilkan ulang seluruh tabel dan gambar
- yang dilaporkan pada naskah (dengan random_state=42 untuk reproduktivitas).
+ Menjalankan skrip ini akan menghasilkan ulang tabel dan Gambar 2-8.
+ Gambar 1 (kurva Precision-Recall) dibuat oleh analisis_tambahan.py.
 
  Cara menjalankan:
      pip install -r requirements.txt
@@ -232,7 +232,7 @@ def train_all_models(X_train, X_test, y_train, y_test):
 
 
 # --------------------------------------------------------------------------
-# 6. EVALUASI VISUAL: CONFUSION MATRIX & ROC (Gambar 1 & 2)
+# 6. EVALUASI VISUAL: CONFUSION MATRIX & ROC (Gambar 2 & 3)
 # --------------------------------------------------------------------------
 def plot_confusion_and_roc(model, X_test, y_test):
     y_pred = model.predict(X_test)
@@ -253,7 +253,7 @@ def plot_confusion_and_roc(model, X_test, y_test):
                      fontsize=14, fontweight="bold")
     plt.colorbar(im, ax=ax, fraction=0.046)
     plt.tight_layout()
-    plt.savefig(FIG_DIR / "gambar1_confusion_matrix.png", dpi=200, bbox_inches="tight")
+    plt.savefig(FIG_DIR / "gambar2_confusion_matrix.png", dpi=200, bbox_inches="tight")
     plt.close()
 
     fpr, tpr, _ = roc_curve(y_test, y_proba)
@@ -265,14 +265,14 @@ def plot_confusion_and_roc(model, X_test, y_test):
     ax.set_title("Kurva ROC - Random Forest (Tuned)")
     ax.legend(loc="lower right")
     plt.tight_layout()
-    plt.savefig(FIG_DIR / "gambar2_roc_curve.png", dpi=200, bbox_inches="tight")
+    plt.savefig(FIG_DIR / "gambar3_roc_curve.png", dpi=200, bbox_inches="tight")
     plt.close()
     print(f"\nConfusion matrix:\n{cm}")
     print(f"AUC-ROC: {auc_val:.4f}")
 
 
 # --------------------------------------------------------------------------
-# 7-8. INTERPRETASI SHAP GLOBAL & LOKAL (Gambar 3-7)
+# 7-8. INTERPRETASI SHAP GLOBAL & LOKAL (Gambar 4-8)
 # --------------------------------------------------------------------------
 def shap_analysis(model, X_test, y_test):
     X_test_renamed = X_test.rename(columns=RENAME_MAP)
@@ -289,15 +289,15 @@ def shap_analysis(model, X_test, y_test):
         sv = shap_values
         base_val = explainer.expected_value
 
-    # --- Global: summary plot (Gambar 3) ---
+    # --- Global: summary plot (Gambar 4) ---
     plt.figure(figsize=(7.5, 5.5))
     shap.summary_plot(sv, X_test_renamed, show=False, max_display=11)
     plt.title("SHAP Summary Plot - Random Forest (Tuned)", fontsize=12)
     plt.tight_layout()
-    plt.savefig(FIG_DIR / "gambar3_shap_summary.png", dpi=200, bbox_inches="tight")
+    plt.savefig(FIG_DIR / "gambar4_shap_summary.png", dpi=200, bbox_inches="tight")
     plt.close()
 
-    # --- Global: bar chart (Gambar 4) ---
+    # --- Global: bar chart (Gambar 5) ---
     mean_abs = np.abs(sv).mean(axis=0)
     order = np.argsort(mean_abs)[::-1]
     feat_sorted = X_test_renamed.columns[order]
@@ -307,7 +307,7 @@ def shap_analysis(model, X_test, y_test):
     ax.set_xlabel("Rata-rata |Nilai SHAP|")
     ax.set_title("Peringkat Kepentingan Fitur (SHAP)\nRandom Forest (Tuned)", fontsize=13)
     plt.tight_layout()
-    plt.savefig(FIG_DIR / "gambar4_shap_bar.png", dpi=200, bbox_inches="tight")
+    plt.savefig(FIG_DIR / "gambar5_shap_bar.png", dpi=200, bbox_inches="tight")
     plt.close()
 
     print("\nPeringkat SHAP global:")
@@ -333,7 +333,7 @@ def shap_analysis(model, X_test, y_test):
     print(ringkasan.round(4))
     ringkasan.round(4).to_csv(RESULTS_DIR / "shap_jumlah_produk_per_kelompok.csv")
 
-    # --- Lokal: pilih 3 sampel representatif (Gambar 5, 6, 7) ---
+    # --- Lokal: pilih 3 sampel representatif (Gambar 6, 7, 8) ---
     y_pred = model.predict(X_test)
     y_proba = pd.Series(model.predict_proba(X_test)[:, 1], index=X_test.index)
     pred_s = pd.Series(y_pred, index=X_test.index)
@@ -343,9 +343,9 @@ def shap_analysis(model, X_test, y_test):
     fp_idx = X_test.index[(pred_s == 1) & (y_test == 0)]
 
     samples = {
-        "gambar5_waterfall_high_risk_TP": y_proba.loc[tp_idx].idxmax(),
-        "gambar6_waterfall_loyal_TN": y_proba.loc[tn_idx].idxmin(),
-        "gambar7_waterfall_false_positive": y_proba.loc[fp_idx].idxmax(),
+        "gambar6_waterfall_high_risk_TP": y_proba.loc[tp_idx].idxmax(),
+        "gambar7_waterfall_loyal_TN": y_proba.loc[tn_idx].idxmin(),
+        "gambar8_waterfall_false_positive": y_proba.loc[fp_idx].idxmax(),
     }
 
     for fname, idx in samples.items():
@@ -381,4 +381,4 @@ if __name__ == "__main__":
     print(f"Tabel hasil tersimpan di: {RESULTS_DIR / 'model_comparison.json'}")
     print(f"Sebaran jumlah produk  : {RESULTS_DIR / 'sebaran_numofproducts.csv'}")
     print(f"SHAP per kelompok produk: {RESULTS_DIR / 'shap_jumlah_produk_per_kelompok.csv'}")
-    print("\nSELESAI. Bandingkan dengan tabel dan Gambar 1-7 pada naskah.")
+    print("\nSELESAI. Bandingkan dengan tabel dan Gambar 1-8 pada naskah.")

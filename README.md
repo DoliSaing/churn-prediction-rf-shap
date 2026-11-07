@@ -4,7 +4,7 @@ Repositori ini menyediakan **kode reproduksi lengkap** untuk naskah:
 
 > Saing, D. M. (2026). *Prediksi Churn Nasabah Perbankan Menggunakan Random Forest dengan Pendekatan Explainable AI (SHAP): Studi Kasus Dataset Bank Churn Kaggle*. Diajukan ke JOINS (Journal of Information System).
 
-Seluruh tabel dan gambar pada naskah (Tabel 1; Gambar 1–7) dapat direproduksi ulang secara identik dengan menjalankan satu skrip, karena seluruh proses (split data, hyperparameter tuning, SMOTE, dan pelatihan model) menggunakan `random_state=42` yang tetap (fixed seed).
+Seluruh tabel dan gambar pada naskah (Tabel 1; Gambar 1–8) dapat direproduksi ulang dengan menjalankan skrip utama dan skrip analisis tambahan, karena seluruh proses (split data, hyperparameter tuning, SMOTE, dan pelatihan model) menggunakan `random_state=42` yang tetap (fixed seed).
 
 ## 📁 Struktur Repositori
 
@@ -14,7 +14,7 @@ churn-prediction-rf-shap/
 │   └── Churn_Modelling.csv      # Dataset (lihat sumber di bawah)
 ├── src/
 │   └── churn_prediction_pipeline.py   # Skrip utama (end-to-end)
-├── figures/                      # Output: 7 gambar (dibuat otomatis saat dijalankan)
+├── figures/                      # Output: 8 gambar (dibuat otomatis saat dijalankan)
 ├── results/                      # Output: tabel hasil dalam format JSON
 ├── requirements.txt
 └── README.md
@@ -51,9 +51,9 @@ Skrip ini akan secara berurutan:
 | 3. Hyperparameter Tuning (RandomizedSearchCV) | Bab 2.4 | Baris 2, Tabel 1 |
 | 4. Random Forest + SMOTE | Bab 2.4 | Baris 3, Tabel 1 |
 | 5. XGBoost, LightGBM, CatBoost | Bab 2.5 | Baris 4–6, Tabel 1 |
-| 6. Evaluasi (Confusion Matrix, ROC) | Bab 2.6, 3.2 | `figures/gambar1_*.png`, `gambar2_*.png` |
-| 7. SHAP Global | Bab 2.7, 3.3 | `figures/gambar3_*.png`, `gambar4_*.png` |
-| 8. SHAP Lokal (Waterfall) | Bab 2.7, 3.4 | `figures/gambar5_*.png` s.d. `gambar7_*.png` |
+| 6. Evaluasi (Confusion Matrix, ROC) | Bab 2.6, 3.2 | `figures/gambar2_*.png`, `gambar3_*.png` |
+| 7. SHAP Global | Bab 2.7, 3.3 | `figures/gambar4_*.png`, `gambar5_*.png` |
+| 8. SHAP Lokal (Waterfall) | Bab 2.7, 3.4 | `figures/gambar6_*.png` s.d. `gambar8_*.png` |
 
 Estimasi waktu eksekusi: ±2–4 menit pada CPU standar (1 core).
 
@@ -98,16 +98,16 @@ Email: dolymarolop@gmail.com
 Dua skrip tambahan dijalankan **setelah** `churn_prediction_pipeline.py` (membaca `results/model_comparison.json`):
 
 ```bash
-python src/churn_prediction_pipeline.py   # Tabel hasil utama dan Gambar 1-7
-python src/analisis_tambahan.py           # CI bootstrap, CV berulang 5x3, pembanding sederhana, PR-AUC, ambang, audit subkelompok, Gambar 8
+python src/churn_prediction_pipeline.py   # Tabel hasil utama dan Gambar 2-8
+python src/analisis_tambahan.py           # CI bootstrap, CV berulang 5x3, pembanding sederhana, PR-AUC, ambang, audit subkelompok, Gambar 1
 python src/tuning_boosting.py             # tuning setara (12 kombinasi, 3-fold, F1) untuk XGBoost, LightGBM, CatBoost
 ```
 
 | Skrip | Keluaran | Bagian naskah revisi |
 |---|---|---|
-| `analisis_tambahan.py` | `results/analisis_tambahan.json`, `figures/gambar8_pr_curve.png` | Tabel 4a, 4b, 5, 6; Gambar 8 |
+| `analisis_tambahan.py` | `results/analisis_tambahan.json`, `figures/gambar1_pr_curve.png` | Tabel 4a, 4b, 5, 6; Gambar 1 |
 | `tuning_boosting.py` | `results/tuning_boosting.json` | Tabel 7 |
-| `churn_prediction_pipeline.py` | `results/sebaran_numofproducts.csv`, `results/shap_jumlah_produk_per_kelompok.csv` | Tabel 2; SHAP per jumlah produk |
+| `churn_prediction_pipeline.py` | `results/sebaran_numofproducts.csv`, `results/shap_jumlah_produk_per_kelompok.csv`, `figures/gambar2_*.png`–`gambar8_*.png` | Tabel 2; SHAP per jumlah produk; Gambar 2–8 |
 
 Semua skrip memakai `random_state = 42` dan sudah dijalankan ulang dua kali dengan hasil identik (scikit-learn 1.8.0, shap 0.54.1, xgboost 3.4.1, lightgbm 4.7.0, catboost 1.2.10, imbalanced-learn 0.14.2).
 
